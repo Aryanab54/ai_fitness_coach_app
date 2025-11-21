@@ -1,70 +1,153 @@
-# Getting Started with Create React App
+# 💪 AI Fitness Coach App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An AI-powered fitness assistant built using **React** that generates **personalized workout and diet plans** using OpenAI GPT-3.5-turbo.
 
-## Available Scripts
+It also includes voice and image generation features for a more immersive experience.
 
-In the project directory, you can run:
+## 🚀 Features
 
-### `npm start`
+### 📝 User Input
+Users can provide their details like:
+- Name, Age, Gender
+- Height & Weight
+- Fitness Goal (Weight Loss, Muscle Gain, etc.)
+- Current Fitness Level (Beginner / Intermediate / Advanced)
+- Workout Location (Home / Gym / Outdoor)
+- Dietary Preferences (Veg / Non-Veg / Vegan / Keto)
+- Optional fields like Medical history, stress level etc.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🧠 AI-Powered Plan Generation
+The app uses **Google Gemini Pro** to generate:
+- 🏋️ **Workout Plan** — with daily exercise routines, sets, reps, and rest time
+- 🥗 **Diet Plan** — meal breakdown for breakfast, lunch, dinner, and snacks
+- 💬 **AI Tips & Motivation** — lifestyle and posture tips, motivational lines
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 🔊 Voice Features
+- **Read My Plan** — Uses **ElevenLabs** for high-quality text-to-speech (fallback to Web Speech API)
+- Option to choose which section to listen to — *Workout or Diet*
 
-### `npm test`
+### 🖼️ Image Generation
+- When user clicks an exercise or meal item, the app uses **Replicate Stable Diffusion** to generate a **visual representation** of that workout or food
+- Examples: "Barbell Squat" → realistic gym exercise image, "Grilled Chicken Salad" → food-style image
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 🧾 Export & Extra Features
+- 📄 Export generated plan as PDF
+- 🌗 Dark / Light mode
+- 💾 Save plan in local storage
+- 🧩 Regenerate Plan option
+- ⚡ Smooth UI with Framer Motion animations
+- 💬 Daily "Motivation Quote" section
 
-### `npm run build`
+## 🛠️ Tech Stack
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Category | Tools |
+| --- | --- |
+| Frontend | React.js |
+| Styling | Tailwind CSS |
+| Animations | Framer Motion |
+| AI APIs | Google Gemini Pro |
+| Voice | ElevenLabs (Web Speech API fallback) |
+| Images | Replicate Stable Diffusion |
+| PDF Export | jsPDF |
+| Icons | Emoji Icons |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🚀 Getting Started
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
 
-### `npm run eject`
+### Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd ai_fitness_coach_app
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. Install dependencies
+```bash
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. Set up environment variables
+```bash
+cp .env.example .env
+```
+Edit `.env` and add your API keys:
+- `REACT_APP_GEMINI_API_KEY` - Google Gemini API key for AI plan generation
+- `REACT_APP_ELEVENLABS_API_KEY` - ElevenLabs API key for text-to-speech
+- `REACT_APP_REPLICATE_API_TOKEN` - Replicate API token for image generation
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+4. Start the development server
+```bash
+npm start
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) to view it in your browser
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📱 Usage
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **Fill out the form** with your personal details and fitness preferences
+2. **Generate your plan** by clicking the "Generate My Fitness Plan" button
+3. **View your personalized plan** with tabs for Workout, Diet, and AI Tips
+4. **Listen to your plan** using the "Read Aloud" feature
+5. **Generate images** by clicking the image icon next to exercises or meals
+6. **Export as PDF** to save your plan offline
+7. **Toggle dark/light mode** using the theme switcher
 
-### Code Splitting
+## 🔧 Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### API Integration
 
-### Analyzing the Bundle Size
+The app is configured to use real AI APIs with fallback to mock implementations:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. **AI Plan Generation**: Google Gemini Pro (fallback to intelligent mock data)
+2. **Text-to-Speech**: ElevenLabs (fallback to Web Speech API)
+3. **Image Generation**: Replicate Stable Diffusion (fallback to curated Unsplash images)
 
-### Making a Progressive Web App
+### Customization
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **Styling**: Modify `tailwind.config.js` and `src/index.css`
+- **Components**: Update components in `src/components/`
+- **API Services**: Modify services in `src/utils/`
 
-### Advanced Configuration
+## 📦 Build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+To create a production build:
 
-### Deployment
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+The build folder will contain the optimized production files ready for deployment.
 
-### `npm run build` fails to minify
+## 🚀 Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This app can be deployed to:
+- **Vercel** (recommended for React apps)
+- **Netlify**
+- **AWS S3 + CloudFront**
+- **GitHub Pages**
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🙏 Acknowledgments
+
+- Create React App for the initial setup
+- Tailwind CSS for styling
+- Framer Motion for animations
+- Google for Gemini Pro API
+- ElevenLabs for text-to-speech
+- Replicate for image generation
+- Unsplash for placeholder images
