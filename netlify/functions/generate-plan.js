@@ -12,42 +12,48 @@ exports.handler = async (event, context) => {
   try {
     const userData = JSON.parse(event.body);
     
-    const prompt = `Create a comprehensive, personalized fitness plan for the following user:
+    const prompt = `Create a concise fitness plan for ${userData.name} (${userData.age}yr, ${userData.gender}, ${userData.height}cm, ${userData.weight}kg, Goal: ${userData.fitnessGoal}, Level: ${userData.fitnessLevel}, Location: ${userData.workoutLocation}, Diet: ${userData.dietaryPreference}).
 
-**Personal Information:**
-- Name: ${userData.name}
-- Age: ${userData.age} years
-- Gender: ${userData.gender}
-- Height: ${userData.height} cm
-- Weight: ${userData.weight} kg
-- Fitness Goal: ${userData.fitnessGoal.replace('-', ' ')}
-- Current Fitness Level: ${userData.fitnessLevel}
-- Workout Location: ${userData.workoutLocation}
-- Dietary Preference: ${userData.dietaryPreference}
-${userData.medicalHistory ? `- Medical History: ${userData.medicalHistory}` : ''}
-${userData.stressLevel ? `- Stress Level: ${userData.stressLevel}` : ''}
-
-Please provide a detailed plan with the following sections:
+Format exactly like this:
 
 **Workout Plan:**
-- Create a weekly workout schedule (7 days)
-- Include specific exercises, sets, reps, and rest periods
-- Tailor exercises to their fitness level and available location
-- Consider their fitness goal (weight loss, muscle gain, etc.)
+Brief intro paragraph about the plan focus.
+
+**Day 1: [Workout Type]**
+- Exercise 1: sets x reps
+- Exercise 2: sets x reps
+- Exercise 3: sets x reps
+
+**Day 2: [Workout Type]**
+- Exercise 1: sets x reps
+- Exercise 2: sets x reps
+
+**Day 3: Rest or Active Recovery**
 
 **Diet Plan:**
-- Provide daily meal plans (breakfast, lunch, dinner, snacks)
-- Include calorie estimates and portion sizes
-- Respect their dietary preferences
-- Align nutrition with their fitness goals
+**Breakfast (calories):**
+- Food item 1
+- Food item 2
 
-**AI Tips & Motivation:**
-- Provide lifestyle tips and recommendations
-- Include motivational advice
-- Suggest ways to track progress
-- Address potential challenges
+**Lunch (calories):**
+- Food item 1
+- Food item 2
 
-Make the plan practical, achievable, and personalized to their specific needs and constraints.`;
+**Dinner (calories):**
+- Food item 1
+- Food item 2
+
+**Snacks (calories):**
+- Snack 1
+- Snack 2
+
+**Tips:**
+- Tip 1
+- Tip 2
+- Tip 3
+- Tip 4
+
+Keep it concise and structured. No long explanations.`;
     
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: 'POST',
