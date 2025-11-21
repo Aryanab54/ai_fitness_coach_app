@@ -12,16 +12,42 @@ exports.handler = async (event, context) => {
   try {
     const userData = JSON.parse(event.body);
     
-    const prompt = `Create a personalized fitness plan for ${userData.name}:
-- Age: ${userData.age}, Gender: ${userData.gender}
-- Height: ${userData.height}cm, Weight: ${userData.weight}kg
-- Goal: ${userData.fitnessGoal}, Level: ${userData.fitnessLevel}
-- Location: ${userData.workoutLocation}, Diet: ${userData.dietaryPreference}
+    const prompt = `Create a comprehensive, personalized fitness plan for the following user:
 
-Provide 3 sections:
-**Workout Plan** - weekly exercises with sets/reps
-**Diet Plan** - daily meals with calories
-**Tips** - motivation and lifestyle advice`;
+**Personal Information:**
+- Name: ${userData.name}
+- Age: ${userData.age} years
+- Gender: ${userData.gender}
+- Height: ${userData.height} cm
+- Weight: ${userData.weight} kg
+- Fitness Goal: ${userData.fitnessGoal.replace('-', ' ')}
+- Current Fitness Level: ${userData.fitnessLevel}
+- Workout Location: ${userData.workoutLocation}
+- Dietary Preference: ${userData.dietaryPreference}
+${userData.medicalHistory ? `- Medical History: ${userData.medicalHistory}` : ''}
+${userData.stressLevel ? `- Stress Level: ${userData.stressLevel}` : ''}
+
+Please provide a detailed plan with the following sections:
+
+**Workout Plan:**
+- Create a weekly workout schedule (7 days)
+- Include specific exercises, sets, reps, and rest periods
+- Tailor exercises to their fitness level and available location
+- Consider their fitness goal (weight loss, muscle gain, etc.)
+
+**Diet Plan:**
+- Provide daily meal plans (breakfast, lunch, dinner, snacks)
+- Include calorie estimates and portion sizes
+- Respect their dietary preferences
+- Align nutrition with their fitness goals
+
+**AI Tips & Motivation:**
+- Provide lifestyle tips and recommendations
+- Include motivational advice
+- Suggest ways to track progress
+- Address potential challenges
+
+Make the plan practical, achievable, and personalized to their specific needs and constraints.`;
     
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: 'POST',
