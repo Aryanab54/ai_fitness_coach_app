@@ -4,7 +4,7 @@ import { exportToPDF } from '../utils/pdfExport';
 import { speakText } from '../utils/speechService';
 import { generateImage } from '../utils/imageService';
 
-const PlanDisplay = ({ plan, userData, onBackToForm, onRegenerate }) => {
+const PlanDisplay = ({ plan, userData, onBackToForm, onRegenerate, onClearSaved }) => {
   const [activeTab, setActiveTab] = useState('workout');
   const [speaking, setSpeaking] = useState(false);
   const [generatingImage, setGeneratingImage] = useState(null);
@@ -306,6 +306,17 @@ const PlanDisplay = ({ plan, userData, onBackToForm, onRegenerate }) => {
                 <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
               </svg>
               <span>Back</span>
+            </button>
+            
+            <button
+              onClick={onClearSaved}
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-xl flex items-center space-x-2 transition-all duration-200 hover:scale-105"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 012 0v4a1 1 0 11-2 0V7zM12 7a1 1 0 112 0v4a1 1 0 11-2 0V7z" clipRule="evenodd" />
+              </svg>
+              <span>Clear Saved</span>
             </button>
           </div>
         </div>

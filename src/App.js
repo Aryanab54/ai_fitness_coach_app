@@ -12,10 +12,33 @@ function App() {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
+    // Load saved theme
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       setDarkMode(true);
       document.documentElement.classList.add('dark');
+    }
+    
+    // Load saved fitness plan
+    const savedPlan = localStorage.getItem('fitnessplan');
+    if (savedPlan) {
+      try {
+        const { plan, userData, timestamp } = JSON.parse(savedPlan);
+        // Check if plan is not too old (7 days)
+        const isRecent = new Date() - new Date(timestamp) < 7 * 24 * 60 * 60 * 1000;
+        if (isRecent && plan && userData) {
+          console.log('💾 Loading saved plan for:', userData.name);
+          setUserPlan(plan);
+          setUserData(userData);
+          setCurrentView('plan');
+        } else {
+          console.log('💾 Saved plan expired, clearing localStorage');
+          localStorage.removeItem('fitnessplan');
+        }
+      } catch (error) {
+        console.error('❌ Error loading saved plan:', error);
+        localStorage.removeItem('fitnessplan');
+      }
     }
   }, []);
 
@@ -34,9 +57,26 @@ function App() {
     setUserPlan(plan);
     setUserData(userData);
     setCurrentView('plan');
+    
+    // Save to localStorage
+    const planData = {
+      plan,
+      userData,
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem('fitnessplan', JSON.stringify(planData));
+    console.log('💾 Plan saved to localStorage');
   };
 
   const handleBackToForm = () => {
+    setCurrentView('form');
+    setUserPlan(null);
+    setUserData(null);
+  };
+  
+  const handleClearSavedPlan = () => {
+    localStorage.removeItem('fitnessplan');
+    console.log('💾 Cleared saved plan from localStorage');
     setCurrentView('form');
     setUserPlan(null);
     setUserData(null);
@@ -61,6 +101,15 @@ function App() {
       const { generateFitnessPlan } = await import('./utils/aiService');
       const newPlan = await generateFitnessPlan(userData);
       setUserPlan(newPlan);
+      
+      // Update localStorage with new plan
+      const planData = {
+        plan: newPlan,
+        userData,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem('fitnessplan', JSON.stringify(planData));
+      console.log('💾 Updated saved plan in localStorage');
       
       console.log('✅ === PLAN REGENERATION SUCCESSFUL ===');
       console.log('✅ New plan generated with sections:', {
@@ -99,6 +148,7 @@ function App() {
               userData={userData}
               onBackToForm={handleBackToForm}
               onRegenerate={handleRegenerate}
+              onClearSaved={handleClearSavedPlan}
             />
           )}
         </motion.div>
