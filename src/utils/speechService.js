@@ -139,8 +139,8 @@ const speakWithWebSpeech = async (text) => {
     // Stop any ongoing speech
     window.speechSynthesis.cancel();
     
-    // Limit text length for Web Speech API (max ~32767 chars)
-    const limitedText = text.length > 1000 ? text.substring(0, 1000) + '... Check your full plan on screen.' : text;
+    // Use full text for Web Speech API
+    const limitedText = text;
     
     const utterance = new SpeechSynthesisUtterance(limitedText);
     utterance.rate = 0.9;
