@@ -21,15 +21,18 @@ exports.handler = async (event) => {
     const data = await response.json();
     const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Plan generation failed';
     
-    const sections = content.split(/(?=\*\*(?:Workout|Diet|Tips))/i);
+    // Split content into sections more precisely
+    const workoutMatch = content.match(/\*\*\s*workout\s*plan\*\*[\s\S]*?(?=\*\*\s*(?:diet|tips)|$)/i);
+    const dietMatch = content.match(/\*\*\s*diet\s*plan\*\*[\s\S]*?(?=\*\*\s*(?:workout|tips)|$)/i);
+    const tipsMatch = content.match(/\*\*\s*(?:ai\s*)?tips[\s\S]*?(?=\*\*\s*(?:workout|diet)|$)/i);
     
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        workout: sections.find(s => /workout/i.test(s)) || 'Workout plan not available',
-        diet: sections.find(s => /diet/i.test(s)) || 'Diet plan not available', 
-        tips: sections.find(s => /tips/i.test(s)) || 'Tips not available'
+        workout: workoutMatch ? workoutMatch[0] : 'Workout plan not available',
+        diet: dietMatch ? dietMatch[0] : 'Diet plan not available',
+        tips: tipsMatch ? tipsMatch[0] : 'Tips not available'
       })
     };
   } catch (error) {
