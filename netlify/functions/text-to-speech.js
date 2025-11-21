@@ -7,6 +7,8 @@ exports.handler = async (event) => {
     const { text } = JSON.parse(event.body);
     const cleanText = text.replace(/[🏋️🥗💡🎯💪🔥📈✅❌⚠️🤖⏳🔊]/g, '').replace(/\n+/g, '. ');
     
+    console.log('🔊 ElevenLabs TTS request for text length:', cleanText.length);
+    
     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL', {
       method: 'POST',
       headers: {
@@ -21,12 +23,18 @@ exports.handler = async (event) => {
       })
     });
 
+    console.log('📡 ElevenLabs Response Status:', response.status);
+
     if (!response.ok) {
-      throw new Error(`ElevenLabs API Error: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      console.error('❌ ElevenLabs API Error:', errorData);
+      throw new Error(`ElevenLabs API Error ${response.status}: ${errorData.detail?.message || 'API request failed'}`);
     }
 
     const audioBuffer = await response.arrayBuffer();
     const base64Audio = Buffer.from(audioBuffer).toString('base64');
+    
+    console.log('✅ Audio generated, size:', audioBuffer.byteLength, 'bytes');
     
     return {
       statusCode: 200,
@@ -34,8 +42,10 @@ exports.handler = async (event) => {
       body: JSON.stringify({ audioData: base64Audio })
     };
   } catch (error) {
+    console.error('❌ TTS Function Error:', error);
     return {
       statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: error.message })
     };
   }
