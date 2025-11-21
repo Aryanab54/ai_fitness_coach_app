@@ -43,16 +43,35 @@ function App() {
   };
 
   const handleRegenerate = async () => {
-    if (!userData) return;
+    if (!userData) {
+      console.warn('⚠️ No user data available for regeneration');
+      return;
+    }
     
     try {
+      console.log('🔄 === STARTING PLAN REGENERATION ===');
       console.log('🔄 Regenerating plan for:', userData.name);
+      console.log('🔄 User data:', {
+        name: userData.name,
+        age: userData.age,
+        goal: userData.fitnessGoal,
+        level: userData.fitnessLevel
+      });
+      
       const { generateFitnessPlan } = await import('./utils/aiService');
       const newPlan = await generateFitnessPlan(userData);
       setUserPlan(newPlan);
-      console.log('✅ Plan regenerated successfully');
+      
+      console.log('✅ === PLAN REGENERATION SUCCESSFUL ===');
+      console.log('✅ New plan generated with sections:', {
+        workout: !!newPlan.workout,
+        diet: !!newPlan.diet,
+        tips: !!newPlan.tips
+      });
     } catch (error) {
-      console.error('❌ Error regenerating plan:', error);
+      console.error('❌ === PLAN REGENERATION FAILED ===');
+      console.error('❌ Error regenerating plan:', error.message);
+      console.error('❌ Error stack:', error.stack);
       alert('Failed to regenerate plan. Please try again.');
     }
   };
