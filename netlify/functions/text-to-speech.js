@@ -7,7 +7,10 @@ exports.handler = async (event) => {
     const { text } = JSON.parse(event.body);
     const cleanText = text.replace(/[🏋️🥗💡🎯💪🔥📈✅❌⚠️🤖⏳🔊]/g, '').replace(/\n+/g, '. ');
     
-    console.log('🔊 ElevenLabs TTS request for text length:', cleanText.length);
+    // Limit text length for ElevenLabs
+    const limitedText = cleanText.length > 2000 ? cleanText.substring(0, 2000) + '...' : cleanText;
+    
+    console.log('🔊 ElevenLabs TTS request for text length:', limitedText.length);
     
     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL', {
       method: 'POST',
@@ -17,7 +20,7 @@ exports.handler = async (event) => {
         'xi-api-key': process.env.ELEVENLABS_API_KEY
       },
       body: JSON.stringify({
-        text: cleanText,
+        text: limitedText,
         model_id: 'eleven_turbo_v2',
         voice_settings: { stability: 0.5, similarity_boost: 0.5 }
       })
