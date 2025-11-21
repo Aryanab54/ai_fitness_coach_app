@@ -60,12 +60,17 @@ Make the plan practical, achievable, and personalized to their specific needs an
     const data = await response.json();
     const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Plan generation failed';
     
-    const sections = content.split(/(?=\*\*)/i).filter(s => s.trim());
-    const workout = sections.find(s => /workout/i.test(s)) || content;
-    const diet = sections.find(s => /diet/i.test(s)) || content;
-    const tips = sections.find(s => /tips/i.test(s)) || content;
+    console.log('Generated content length:', content.length);
+    console.log('Content preview:', content.substring(0, 500));
     
-    const plan = { workout, diet, tips };
+    // Return the full content for all sections temporarily to debug
+    const plan = {
+      workout: content,
+      diet: content, 
+      tips: content
+    };
+    
+    console.log('Returning plan with content length:', content.length);
 
     return {
       statusCode: 200,
