@@ -11,6 +11,8 @@ exports.handler = async (event) => {
     const limitedText = cleanText.length > 2000 ? cleanText.substring(0, 2000) + '...' : cleanText;
     
     console.log('🔊 ElevenLabs TTS request for text length:', limitedText.length);
+    console.log('🔑 API Key present:', !!process.env.ELEVENLABS_API_KEY);
+    console.log('🔑 API Key length:', process.env.ELEVENLABS_API_KEY?.length);
     
     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL', {
       method: 'POST',
@@ -29,9 +31,11 @@ exports.handler = async (event) => {
     console.log('📡 ElevenLabs Response Status:', response.status);
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('❌ ElevenLabs API Error:', errorData);
-      throw new Error(`ElevenLabs API Error ${response.status}: ${errorData.detail?.message || 'API request failed'}`);
+      const errorText = await response.text().catch(() => 'No error text');
+      console.error('❌ ElevenLabs API Error Status:', response.status);
+      console.error('❌ ElevenLabs API Error Text:', errorText);
+      console.error('❌ ElevenLabs API Headers:', Object.fromEntries(response.headers.entries()));
+      throw new Error(`ElevenLabs API Error ${response.status}: ${errorText}`);
     }
 
     const audioBuffer = await response.arrayBuffer();
