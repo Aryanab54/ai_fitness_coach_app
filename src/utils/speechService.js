@@ -29,7 +29,15 @@ const speakWithNetlify = async (text) => {
       throw new Error(`Speech generation failed: ${response.status}`);
     }
     
-    const { audioData } = await response.json();
+    const data = await response.json();
+    
+    // Check if fallback is needed
+    if (data.fallback) {
+      console.log('🔄 ElevenLabs quota exceeded, using Web Speech API fallback');
+      return await speakWithWebSpeech(data.text);
+    }
+    
+    const { audioData } = data;
     console.log('🎧 Audio data received, converting to blob...');
     
     const audioBlob = new Blob([Uint8Array.from(atob(audioData), c => c.charCodeAt(0))], { type: 'audio/mpeg' });
@@ -118,6 +126,33 @@ const speakWithElevenLabs = async (text) => {
       console.error('❌ Audio play failed:', error);
       reject(error);
     });
+  });
+};
+
+const speakWithWebSpeech = async (text) => {
+  return new Promise((resolve, reject) => {
+    if (!window.speechSynthesis) {
+      reject(new Error('Web Speech API not supported'));
+      return;
+    }
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    
+    utterance.onend = () => {
+      console.log('✅ Web Speech API completed');
+      resolve();
+    };
+    
+    utterance.onerror = (error) => {
+      console.error('❌ Web Speech API error:', error);
+      reject(error);
+    };
+    
+    window.speechSynthesis.speak(utterance);
+    console.log('🔊 Using Web Speech API fallback');
   });
 };
 

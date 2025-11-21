@@ -7,8 +7,8 @@ exports.handler = async (event) => {
     const { text } = JSON.parse(event.body);
     const cleanText = text.replace(/[🏋️🥗💡🎯💪🔥📈✅❌⚠️🤖⏳🔊]/g, '').replace(/\n+/g, '. ');
     
-    // Limit text length for ElevenLabs
-    const limitedText = cleanText.length > 2000 ? cleanText.substring(0, 2000) + '...' : cleanText;
+    // Use only first 300 characters to stay within free tier
+    const limitedText = cleanText.substring(0, 300) + (cleanText.length > 300 ? '... Check your full plan below.' : '');
     
     console.log('🔊 ElevenLabs TTS request for text length:', limitedText.length);
     console.log('🔑 API Key present:', !!process.env.ELEVENLABS_API_KEY);
@@ -34,7 +34,16 @@ exports.handler = async (event) => {
       const errorText = await response.text().catch(() => 'No error text');
       console.error('❌ ElevenLabs API Error Status:', response.status);
       console.error('❌ ElevenLabs API Error Text:', errorText);
-      console.error('❌ ElevenLabs API Headers:', Object.fromEntries(response.headers.entries()));
+      
+      // Return fallback signal for quota exceeded
+      if (response.status === 401 && errorText.includes('quota_exceeded')) {
+        return {
+          statusCode: 200,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fallback: true, text: cleanText })
+        };
+      }
+      
       throw new Error(`ElevenLabs API Error ${response.status}: ${errorText}`);
     }
 
