@@ -7,8 +7,8 @@ exports.handler = async (event) => {
     const { text } = JSON.parse(event.body);
     const cleanText = text.replace(/[🏋️🥗💡🎯💪🔥📈✅❌⚠️🤖⏳🔊]/g, '').replace(/\n+/g, '. ');
     
-    // Use only first 300 characters to stay within free tier
-    const limitedText = cleanText.substring(0, 300) + (cleanText.length > 300 ? '... Check your full plan below.' : '');
+    // Use full text since fallback handles quota issues
+    const limitedText = cleanText;
     
     console.log('🔊 ElevenLabs TTS request for text length:', limitedText.length);
     console.log('🔑 API Key present:', !!process.env.ELEVENLABS_API_KEY);
