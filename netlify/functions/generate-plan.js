@@ -60,17 +60,35 @@ Make the plan practical, achievable, and personalized to their specific needs an
     const data = await response.json();
     const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Plan generation failed';
     
-    console.log('Generated content length:', content.length);
-    console.log('Content preview:', content.substring(0, 500));
+    // Parse content into sections based on actual structure
+    const workoutStart = content.search(/workout\s*plan/i);
+    const dietStart = content.search(/diet\s*plan/i);
+    const tipsStart = content.search(/(ai\s*tips|tips\s*&\s*motivation|lifestyle\s*tips)/i);
     
-    // Return the full content for all sections temporarily to debug
-    const plan = {
-      workout: content,
-      diet: content, 
-      tips: content
-    };
+    let workout = '', diet = '', tips = '';
     
-    console.log('Returning plan with content length:', content.length);
+    if (workoutStart !== -1) {
+      const workoutEnd = dietStart !== -1 ? dietStart : (tipsStart !== -1 ? tipsStart : content.length);
+      workout = content.substring(workoutStart, workoutEnd).trim();
+    }
+    
+    if (dietStart !== -1) {
+      const dietEnd = tipsStart !== -1 ? tipsStart : content.length;
+      diet = content.substring(dietStart, dietEnd).trim();
+    }
+    
+    if (tipsStart !== -1) {
+      tips = content.substring(tipsStart).trim();
+    }
+    
+    // Fallback if sections not found
+    if (!workout && !diet && !tips) {
+      workout = content;
+      diet = content;
+      tips = content;
+    }
+    
+    const plan = { workout: workout || content, diet: diet || content, tips: tips || content };
 
     return {
       statusCode: 200,
