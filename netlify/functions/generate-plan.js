@@ -1,83 +1,101 @@
-// Use built-in fetch in Node 18+
-
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
+  // Set timeout to 10 seconds
+  context.callbackWaitsForEmptyEventLoop = false;
+  
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method Not Allowed' })
+    };
   }
 
   try {
     const userData = JSON.parse(event.body);
     
-    const prompt = `Create a comprehensive, personalized fitness plan for the following user:
+    // Simple mock response for testing
+    const mockPlan = {
+      workout: `**Workout Plan for ${userData.name}**
 
-**Personal Information:**
-- Name: ${userData.name}
-- Age: ${userData.age} years
-- Gender: ${userData.gender}
-- Height: ${userData.height} cm
-- Weight: ${userData.weight} kg
-- Fitness Goal: ${userData.fitnessGoal.replace('-', ' ')}
-- Current Fitness Level: ${userData.fitnessLevel}
-- Workout Location: ${userData.workoutLocation}
-- Dietary Preference: ${userData.dietaryPreference}
-${userData.medicalHistory ? `- Medical History: ${userData.medicalHistory}` : ''}
-${userData.stressLevel ? `- Stress Level: ${userData.stressLevel}` : ''}
+**Day 1: Upper Body**
+- Push-ups: 3 sets x 10-15 reps
+- Dumbbell rows: 3 sets x 12 reps
+- Shoulder press: 3 sets x 10 reps
+- Plank: 3 sets x 30 seconds
 
-Please provide a detailed plan with the following sections:
+**Day 2: Lower Body**
+- Squats: 3 sets x 15 reps
+- Lunges: 3 sets x 10 per leg
+- Calf raises: 3 sets x 15 reps
+- Wall sit: 3 sets x 30 seconds
 
-**Workout Plan:**
-- Create a weekly workout schedule (7 days)
-- Include specific exercises, sets, reps, and rest periods
-- Tailor exercises to their fitness level and available location
-- Consider their fitness goal (weight loss, muscle gain, etc.)
+**Day 3: Rest Day**
 
-**Diet Plan:**
-- Provide daily meal plans (breakfast, lunch, dinner, snacks)
-- Include calorie estimates and portion sizes
-- Respect their dietary preferences
-- Align nutrition with their fitness goals
+**Day 4: Full Body**
+- Burpees: 3 sets x 8 reps
+- Mountain climbers: 3 sets x 20 reps
+- Jumping jacks: 3 sets x 30 seconds
+- Rest: 1 minute between sets`,
 
-**AI Tips & Motivation:**
-- Provide lifestyle tips and recommendations
-- Include motivational advice
-- Suggest ways to track progress
-- Address potential challenges
+      diet: `**Diet Plan for ${userData.name}**
 
-Make the plan practical, achievable, and personalized to their specific needs and constraints.`;
-    
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: prompt }]
-        }]
-      })
-    });
+**Breakfast (400-500 calories):**
+- Oatmeal with berries and nuts
+- Greek yogurt with honey
+- Green tea
 
-    const data = await response.json();
-    const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Plan generation failed';
-    
-    // Simple split approach - more reliable
-    const sections = content.split(/(?=\*\*)/i).filter(s => s.trim());
-    
-    const workout = sections.find(s => /workout/i.test(s)) || content;
-    const diet = sections.find(s => /diet/i.test(s)) || content;
-    const tips = sections.find(s => /tips|motivation/i.test(s)) || content;
-    
+**Lunch (500-600 calories):**
+- Grilled chicken salad
+- Brown rice (1/2 cup)
+- Mixed vegetables
+- Water
+
+**Dinner (500-600 calories):**
+- Baked fish with vegetables
+- Sweet potato
+- Side salad
+- Water
+
+**Snacks (150-200 calories each):**
+- Apple with almond butter
+- Greek yogurt
+- Mixed nuts (small handful)`,
+
+      tips: `**AI Tips & Motivation for ${userData.name}**
+
+**Lifestyle Tips:**
+- Stay hydrated: Drink 8-10 glasses of water daily
+- Get 7-8 hours of quality sleep
+- Take rest days seriously for muscle recovery
+- Track your progress weekly
+
+**Motivation:**
+- Start small and build consistency
+- Celebrate small victories
+- Find a workout buddy for accountability
+- Remember: Progress over perfection
+
+**Progress Tracking:**
+- Take weekly photos
+- Measure weight and body measurements
+- Keep a workout log
+- Note energy levels and mood improvements`
+    };
+
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        workout: workout,
-        diet: diet,
-        tips: tips
-      })
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify(mockPlan)
     };
+
   } catch (error) {
+    console.error('Function error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: 'Internal server error' })
     };
   }
 };
