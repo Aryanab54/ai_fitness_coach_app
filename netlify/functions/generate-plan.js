@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+// Use built-in fetch in Node 18+
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
