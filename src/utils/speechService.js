@@ -136,7 +136,13 @@ const speakWithWebSpeech = async (text) => {
       return;
     }
     
-    const utterance = new SpeechSynthesisUtterance(text);
+    // Stop any ongoing speech
+    window.speechSynthesis.cancel();
+    
+    // Limit text length for Web Speech API (max ~32767 chars)
+    const limitedText = text.length > 1000 ? text.substring(0, 1000) + '... Check your full plan on screen.' : text;
+    
+    const utterance = new SpeechSynthesisUtterance(limitedText);
     utterance.rate = 0.9;
     utterance.pitch = 1;
     utterance.volume = 1;
@@ -148,13 +154,22 @@ const speakWithWebSpeech = async (text) => {
     
     utterance.onerror = (error) => {
       console.error('❌ Web Speech API error:', error);
+      window.speechSynthesis.cancel();
       reject(error);
     };
     
     window.speechSynthesis.speak(utterance);
-    console.log('🔊 Using Web Speech API fallback');
+    console.log('🔊 Using Web Speech API fallback for', limitedText.length, 'characters');
   });
 };
 
-export const stopSpeaking = () => {};
-export const isSpeaking = () => false;
+export const stopSpeaking = () => {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    console.log('⏹️ Speech stopped');
+  }
+};
+
+export const isSpeaking = () => {
+  return window.speechSynthesis ? window.speechSynthesis.speaking : false;
+};
