@@ -46,11 +46,13 @@ function App() {
     if (!userData) return;
     
     try {
+      console.log('🔄 Regenerating plan for:', userData.name);
       const { generateFitnessPlan } = await import('./utils/aiService');
       const newPlan = await generateFitnessPlan(userData);
       setUserPlan(newPlan);
+      console.log('✅ Plan regenerated successfully');
     } catch (error) {
-      console.error('Error regenerating plan:', error);
+      console.error('❌ Error regenerating plan:', error);
       alert('Failed to regenerate plan. Please try again.');
     }
   };
